@@ -1,0 +1,1067 @@
+{
+  "name": "Multi-Agent AI System",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -2560,
+        -128
+      ],
+      "id": "4f553982-bb16-41a7-bbac-433a22f31971",
+      "name": "When chat message received",
+      "webhookId": "ed28a655-c7d5-4411-9539-a8dad3073a6e"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -2496,
+        80
+      ],
+      "id": "961c9b79-f88e-484f-b50c-4219e047de73",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "rlUXHM8EMcfc7oCT",
+          "name": "OpenAi account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.sessionId || $execution.id }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -2352,
+        80
+      ],
+      "id": "4c39e1d8-1aff-49a2-af07-4852cb54342c",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "447bf685-72ac-44d6-a661-8c026515a102",
+              "leftValue": "Gatekeeper output",
+              "rightValue": "SAFE",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -2064,
+        -128
+      ],
+      "id": "73cd11d4-2f96-4612-bba7-218789d84ce1",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1cb365f7-40cc-4f5f-9fc4-d6f1936525f8",
+              "name": "responseText",
+              "value": "You have asked an unsafe query",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1968,
+        -416
+      ],
+      "id": "51068cf8-8e11-459c-941e-cde919299810",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "responsesApiEnabled": false,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -1792,
+        0
+      ],
+      "id": "29afae06-6afa-4c71-9c79-230b565b1547",
+      "name": "OpenAI Chat Model1",
+      "credentials": {
+        "openAiApi": {
+          "id": "rlUXHM8EMcfc7oCT",
+          "name": "OpenAi account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "assigned_agents",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -1360,
+        -336
+      ],
+      "id": "3f3d2b8e-bca5-4ccc-b51d-39db41e1464b",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.assigned_agents }}",
+                    "rightValue": "Weather Agent",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "f9374fb0-577b-49b5-a1e3-5b3f48ef1562"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "ce8e80b4-7b20-44e7-9b58-0dcf0eef256f",
+                    "leftValue": "={{ $json.assigned_agents }}",
+                    "rightValue": "Forex Agent",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "6f6e1799-76e7-4863-bb61-12d7ef768e61",
+                    "leftValue": "={{ $json.assigned_agents }}",
+                    "rightValue": "Google Calendar Agent",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "a9578854-333e-4b8c-9fea-3fc4e10857f0",
+                    "leftValue": "={{ $json.assigned_agents }}",
+                    "rightValue": "Secretary Agent",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -1232,
+        -224
+      ],
+      "id": "f44c5fbf-9d2f-4d55-b8a5-7c948d8d4ffd",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -896,
+        -304
+      ],
+      "id": "66a5836d-b2b1-4a5f-ba43-10578b653ff9",
+      "name": "OpenAI Chat Model2",
+      "credentials": {
+        "openAiApi": {
+          "id": "rlUXHM8EMcfc7oCT",
+          "name": "OpenAi account 4"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -752,
+        -320
+      ],
+      "id": "90463986-e4f8-46bf-b7b0-19738d882813",
+      "name": "Simple Memory1"
+    },
+    {
+      "parameters": {
+        "cityName": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('City', ``, 'string') }}"
+      },
+      "type": "n8n-nodes-base.openWeatherMapTool",
+      "typeVersion": 1,
+      "position": [
+        -576,
+        -320
+      ],
+      "id": "34097e65-b89b-42b5-ba68-89939c804e03",
+      "name": "OpenWeatherMap",
+      "credentials": {
+        "openWeatherMapApi": {
+          "id": "iQDzySrwidjucuEf",
+          "name": "OpenWeatherMap account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -576,
+        -16
+      ],
+      "id": "7886f9b1-fc47-4e9a-87b9-78bb90284b4d",
+      "name": "OpenAI Chat Model3",
+      "credentials": {
+        "openAiApi": {
+          "id": "rlUXHM8EMcfc7oCT",
+          "name": "OpenAi account 4"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -432,
+        -32
+      ],
+      "id": "56c894ee-1299-4f78-a3db-3ad63dc7ed0b",
+      "name": "Simple Memory2"
+    },
+    {
+      "parameters": {
+        "url": "https://v6.exchangerate-api.com/v6/d8460b899b3f2aa7ba1b9b82/latest/USD",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequestTool",
+      "typeVersion": 4.3,
+      "position": [
+        -272,
+        -48
+      ],
+      "id": "6e6a43e3-6a38-43f9-a5f3-5aca70a47ff6",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -720,
+        368
+      ],
+      "id": "2c703aaa-94fd-44a6-9318-44ab4282ff84",
+      "name": "OpenAI Chat Model4",
+      "credentials": {
+        "openAiApi": {
+          "id": "rlUXHM8EMcfc7oCT",
+          "name": "OpenAi account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "calendar": {
+          "__rl": true,
+          "value": "raj.doms@gmail.com",
+          "mode": "id"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        -224,
+        224
+      ],
+      "id": "c6d3c2e9-8335-4c20-abde-157f69dc58d3",
+      "name": "Get many events in Google Calendar",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "vDQvrTMlbYEjtevu",
+          "name": "Google Calendar account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "calendar": {
+          "__rl": true,
+          "value": "raj.doms@gmail.com",
+          "mode": "id"
+        },
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        -464,
+        384
+      ],
+      "id": "86726f35-e3d2-4942-9602-4ec4dada85a4",
+      "name": "Create an event in Google Calendar",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "vDQvrTMlbYEjtevu",
+          "name": "Google Calendar account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "contextWindowLength": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -592,
+        336
+      ],
+      "id": "0dcd6f17-0755-4605-94a5-168f53466a0e",
+      "name": "Simple Memory3"
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "calendar": {
+          "__rl": true,
+          "value": "raj.doms@gmail.com",
+          "mode": "id"
+        },
+        "eventId": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Event_ID', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleCalendarTool",
+      "typeVersion": 1.3,
+      "position": [
+        -320,
+        416
+      ],
+      "id": "5b9d7a42-9b7b-442b-9a81-a0a39a94961f",
+      "name": "Delete an event in Google Calendar",
+      "credentials": {
+        "googleCalendarOAuth2Api": {
+          "id": "vDQvrTMlbYEjtevu",
+          "name": "Google Calendar account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        -608,
+        768
+      ],
+      "id": "840efbe8-6a34-4de7-aea6-307f3f5319af",
+      "name": "OpenAI Chat Model5",
+      "credentials": {
+        "openAiApi": {
+          "id": "rlUXHM8EMcfc7oCT",
+          "name": "OpenAi account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "numberInputs": 4
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        208,
+        -224
+      ],
+      "id": "3744cf32-7380-4adf-b5bf-59981bdfe840",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=This is the user's question: {{ $items(\"When chat message received\")[0].json.chatInput }} These are the answers from the agents: {{ $json.fullText }} Summarize the outputs from the agents to answer the user's question.",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        864,
+        -192
+      ],
+      "id": "a912372d-e360-4836-9940-17ccc21d305d",
+      "name": "Basic LLM Chain1"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        800,
+        16
+      ],
+      "id": "b178fbce-2901-48fb-b33d-6d57b0703ea6",
+      "name": "OpenAI Chat Model6",
+      "credentials": {
+        "openAiApi": {
+          "id": "rlUXHM8EMcfc7oCT",
+          "name": "OpenAi account 4"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Input: {{ $('When chat message received').item.json.chatInput }}\n\nCategory: {\"Google Calendar Agent\", \"Forex Agent\", \"Weather Agent\", \"Secretary\n\nAgent\"}\n\nCheck the input based on the query and choose one option.\n\nAny Input that is not related to “Google Calendar Agent\", \"Forex Agent\", \"Weather\n\nAgent\" treat that input as \"Secretary Agent\"\n\n \n\nReturn ONLY a pure JSON object.\n\nDo NOT use markdown.\n\nDo NOT use ```json.\n\nDo NOT add explanations.\n\n \n\nExample:\n\n{\n\n\"assigned_agents\": [\"Weather Agent\"]\n\n}",
+        "hasOutputParser": true,
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        -1792,
+        -224
+      ],
+      "id": "6768d38b-ecf0-468a-af8f-d7fb8f41e96a",
+      "name": "Manager Agent"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Call this agent for questions related to Google Calendar Events. The current date & time in IST is {{ $now }}. Retrieve, create, postpone, or delete Google Calendar events based on the user's request. Include date, time, title, and any relevant details. User query: {{ $('When chat message received').item.json.chatInput }}\n",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -592,
+        112
+      ],
+      "id": "e765b0df-1de3-474f-be7c-e2eddc56192e",
+      "name": "Google Calendar Agent"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=For Forex Related General Queries: You are a Forex Assistant. When a user asks about currency exchange, retrieve the latest forex rates (GBP, USD, EUR, JPY, etc.), explain briefly, and provide the answer in a structured format: [Currency Pair] – [Rate] – [Date/Time]. If unavailable, respond with the closest recent information. For Real-time Conversion: \"Fetch the latest forex rate for the requested currency pair (e.g., USD/INR, GBP/JPY) and provide both the current rate and today’s percentage change.\" For Market Insight: \"Summarize the current forex market trends for the requested currency pair, including today’s rate, volatility, and any significant news if available.\" For Simple Forex Related Queries: \"Give the latest exchange rate for the user’s requested currency pair in plain text format (e.g., 1 USD = 83.2 INR as of [time]).\ninput: {{ $('When chat message received').item.json.chatInput }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -464,
+        -208
+      ],
+      "id": "50c36310-7ab6-4ce6-a94e-a43835d519ca",
+      "name": "Forex Agent"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=please identify the city name by yourself from the query and take the help of weather agent tools to give the answer\ninput: \n {{ $('When chat message received').item.json.chatInput }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -848,
+        -512
+      ],
+      "id": "389a29bc-1931-4850-b2f6-24718def44b3",
+      "name": "Weather Agent"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Answer the user's query or provide a reminder/note. Query: {{ $('When chat message received').item.json.chatInput }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -608,
+        592
+      ],
+      "id": "754754c0-b8d3-47d2-bfd2-028ce6cc71fc",
+      "name": "Secretary Agent"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "You are a content gatekeeper. Your job is to review a message and determine whether it is safe or unsafe. Instructions: 1. If the message contains any harmful, offensive, illegal, or inappropriate content, classify it as UNSAFE. 2. If the message is free of harmful or inappropriate content, classify it as SAFE. 3. Only respond with one word: SAFE or UNSAFE. Do not add explanations.",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        -2352,
+        -128
+      ],
+      "id": "ac759926-253c-420c-a866-2dc54b809ebc",
+      "name": "Gatekeeper Agent"
+    },
+    {
+      "parameters": {
+        "jsCode": "const raw = items[0].json.text;\n\n \n\nreturn [\n\n  {\n\n    json: JSON.parse(raw)\n\n  }\n\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1488,
+        -192
+      ],
+      "id": "0150da0c-5e42-4402-bee5-64f2cfcd3573",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Get all incoming items\n\nconst inputItems = items;\n\n \n\n// 2. Extract the \"output\" field and ensure it is string\n\nconst texts = inputItems.map(item => String(item.json.output));\n\n \n\n// 3. Join with double newlines\n\nconst fullText = texts.join(\"\\n\\n\");\n\n \n\n// 4. Return single item\n\nreturn [\n\n  {\n\n    json: {\n\n      fullText: fullText\n\n    }\n\n  }\n\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        416,
+        -224
+      ],
+      "id": "517ca9c6-07f4-4651-96c2-cd8f62a44708",
+      "name": "Code in JavaScript1"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e9ad7b56-9e7d-4ed7-82c8-4ff8f66a1260",
+              "name": "fullText",
+              "value": "={{ $json.fullText }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        656,
+        -192
+      ],
+      "id": "a2f5ac01-d35d-4c25-9762-710d13f6591f",
+      "name": "JSON to String"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Gatekeeper Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Gatekeeper Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "Gatekeeper Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Manager Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Manager Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Weather Agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Forex Agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Google Calendar Agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Secretary Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Weather Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory1": {
+      "ai_memory": [
+        [
+          {
+            "node": "Weather Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenWeatherMap": {
+      "ai_tool": [
+        [
+          {
+            "node": "Weather Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Forex Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory2": {
+      "ai_memory": [
+        [
+          {
+            "node": "Forex Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "ai_tool": [
+        [
+          {
+            "node": "Forex Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model4": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Google Calendar Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many events in Google Calendar": {
+      "ai_tool": [
+        [
+          {
+            "node": "Google Calendar Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create an event in Google Calendar": {
+      "ai_tool": [
+        [
+          {
+            "node": "Google Calendar Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory3": {
+      "ai_memory": [
+        [
+          {
+            "node": "Google Calendar Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete an event in Google Calendar": {
+      "ai_tool": [
+        [
+          {
+            "node": "Google Calendar Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model5": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Secretary Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model6": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Manager Agent": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Calendar Agent": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Forex Agent": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Weather Agent": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Secretary Agent": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "Gatekeeper Agent": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript1": {
+      "main": [
+        [
+          {
+            "node": "JSON to String",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "JSON to String": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "bc04fe73-dc59-4182-9b38-16c59423dc6d",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "591c3e9c361a818ef1bc833f398237c4e39b372cf4b9651cf2cf09a9c2d511df"
+  },
+  "id": "pMA62npReJnX8IhI93NB3",
+  "tags": []
+}
