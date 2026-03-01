@@ -226,6 +226,8 @@ This project demonstrates:
 ✅ No-code + AI hybrid automation  
 
 ---
+Workflow ScreenShot:
+<img width="2766" height="1500" alt="image" src="https://github.com/user-attachments/assets/928ea262-2eae-465c-9590-3b974a27d937" />
 
 ## 👨‍💻 Author
 
