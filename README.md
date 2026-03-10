@@ -32,6 +32,9 @@ To build a multi-agent workflow in n8n that:
 
 ## 🏗 System Architecture
 
+<img width="1600" height="612" alt="image" src="https://github.com/user-attachments/assets/d11b1abc-5cfa-4da6-8f8c-7be36e5fb14b" />
+
+
 ### 🔐 1. Gatekeeper Agent
 - Filters unsafe queries
 - Classifies messages as `SAFE` or `UNSAFE`
